@@ -11,7 +11,7 @@ services:
       - "0.0.0.0:${QDRANT_HTTP_PORT:-7333}:6333"
       - "0.0.0.0:${QDRANT_GRPC_PORT:-7334}:6334"
     volumes:
-      - qdrant_data:/qdrant/storage
+      - ./.qdrant_data:/qdrant/storage
     restart: unless-stopped
     # Qdrant di default ascolta già su 0.0.0.0 all'interno del container
 
@@ -22,7 +22,7 @@ services:
       # Mappiamo la porta standard 11434 su una non standard
       - "0.0.0.0:${OLLAMA_PORT:-12434}:11434"
     volumes:
-      - ollama_data:/root/.ollama
+      - ./.ollama_data:/root/.ollama
     environment:
       # Configurazione necessaria affinché Ollama ascolti su 0.0.0.0 all'interno del container
       # altrimenti di default ascolterebbe solo su 127.0.0.1 (localhost)
@@ -41,6 +41,4 @@ services:
       - OLLAMA_HOST=ollama:11434
     command: pull ${OLLAMA_MODEL:-embeddinggemma}
 
-volumes:
-  qdrant_data:
-  ollama_data:
+

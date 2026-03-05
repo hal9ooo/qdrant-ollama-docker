@@ -83,10 +83,18 @@ Per fermare l'esecuzione dei servizi mantenendo i dati salvati:
 docker compose down
 ```
 
-Per **cancellare tutti i dati salvati** (i modelli scaricati su Ollama e le collezioni presenti su Qdrant), elimina i volumi Docker:
+### 💾 Storage Persistente e Reset
+
+Per garantire la massima compatibilità e persistenza (specialmente per il Codebase Indexing con Roo Code), tutti i database e i modelli testuali **vengono salvati automaticamente in due cartelle locali** all'interno di questo repository:
+
+- `./.qdrant_data`
+- `./.ollama_data`
+
+Per **cancellare tutti i dati salvati** (i modelli scaricati su Ollama e le collezioni presenti su Qdrant) e far ripartire l'ambiente completamente da zero, ti basterà fermare i container ed eliminare fisicamente quelle due cartelle:
 
 ```bash
-docker compose down -v
+docker compose down
+sudo rm -rf .qdrant_data .ollama_data
 ```
 
 ## 📝 Licenza
