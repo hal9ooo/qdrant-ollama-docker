@@ -4,8 +4,10 @@ import os
 from fastmcp import FastMCP
 from mem0 import Memory
 
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+DEEPSEEK_MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://ollama:11434")
-OLLAMA_CHAT_MODEL = os.environ.get("OLLAMA_CHAT_MODEL", "gemma4:e2b")
 OLLAMA_EMBED_MODEL = os.environ.get("OLLAMA_MODEL", "embeddinggemma")
 QDRANT_HOST = os.environ.get("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
@@ -23,10 +25,11 @@ config = {
         },
     },
     "llm": {
-        "provider": "ollama",
+        "provider": "deepseek",
         "config": {
-            "model": OLLAMA_CHAT_MODEL,
-            "ollama_base_url": OLLAMA_BASE_URL,
+            "model": DEEPSEEK_MODEL,
+            "api_key": DEEPSEEK_API_KEY,
+            "deepseek_base_url": DEEPSEEK_BASE_URL,
             "temperature": 0.0,
         },
     },

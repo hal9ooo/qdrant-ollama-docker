@@ -66,9 +66,14 @@ services:
       - ollama
       - qdrant
     environment:
+      # Embedder: modello locale Ollama per le embedding (768-dim)
       - OLLAMA_BASE_URL=http://ollama:11434
       - OLLAMA_MODEL=${OLLAMA_MODEL:-embeddinggemma}
-      - OLLAMA_CHAT_MODEL=${MEM0_CHAT_MODEL:-gemma4:e2b}
+      # LLM: DeepSeek nativo per estrazione memoria
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - DEEPSEEK_BASE_URL=${DEEPSEEK_BASE_URL:-https://api.deepseek.com/v1}
+      - DEEPSEEK_MODEL=${DEEPSEEK_MODEL:-deepseek-chat}
+      # Qdrant vector store
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
       - COLLECTION_NAME=mem0_memories
