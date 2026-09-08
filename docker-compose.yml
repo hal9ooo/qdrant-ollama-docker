@@ -23,10 +23,22 @@ services:
       - "0.0.0.0:${OLLAMA_PORT:-12434}:11434"
     volumes:
       - ./.ollama_data:/root/.ollama
+    # Passiamo la GPU integrata (AMD Strix Halo / Radeon 8060S) al container
+    # per l'inferenza via Vulkan (RADV). Il render node è sufficiente per il compute.
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/dri/card1:/dev/dri/card1
+    group_add:
+      - "987"
+      - "983"
     environment:
       # Configurazione necessaria affinché Ollama ascolti su 0.0.0.0 all'interno del container
       # altrimenti di default ascolterebbe solo su 127.0.0.1 (localhost)
       - OLLAMA_HOST=0.0.0.0
+      # Forza l'uso del runtime Vulkan (GPU integrata AMD senza ROCm dedicato)
+      - OLLAMA_VULKAN=true
+      # Abilita l'inferenza sulla GPU integrata (Radeon 8060S / Strix Halo)
+      - OLLAMA_IGPU_ENABLE=1
     restart: unless-stopped
 
   # Questo container ausiliario serve esclusivamente a lanciare il comando
@@ -39,6 +51,29 @@ services:
     environment:
       # Indichiamo a questo container di collegarsi all'host dell'altro container "ollama"
       - OLLAMA_HOST=ollama:11434
-    command: pull ${OLLAMA_MODEL:-embeddinggemma}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "ollama pull ${OLLAMA_MODEL:-embeddinggemma} && ollama pull ${MEM0_CHAT_MODEL:-gemma4:e2b}"
+
+  # Server MCP di Mem0: espone i tool di memoria a OpenCode usando
+  # la libreria mem0ai, puntando a Ollama (LLM + embedder) e Qdrant (vector store).
+  mem0:
+    build: ./mem0
+    container_name: mem0_mcp
+    ports:
+      - "0.0.0.0:${MEM0_PORT:-8090}:8000"
+    depends_on:
+      - ollama
+      - qdrant
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-embeddinggemma}
+      - OLLAMA_CHAT_MODEL=${MEM0_CHAT_MODEL:-gemma4:e2b}
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - COLLECTION_NAME=mem0_memories
+    volumes:
+      - ./.mem0_data:/data
+    restart: unless-stopped
 
 
