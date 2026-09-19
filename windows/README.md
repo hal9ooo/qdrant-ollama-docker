@@ -20,7 +20,7 @@ Layout atteso: repo clonato in `C:\mem0\qdrant-ollama-docker`, dati in `C:\mem0`
 ```powershell
 mkdir C:\mem0
 cd C:\mem0
-git clone https://github.com/hal9ooo/qdrant-ollama-docker.git
+git clone -b feature/deepseek-flash https://github.com/hal9ooo/qdrant-ollama-docker.git
 # porta i tarball dal PC Linux (USB/rete) in C:\mem0 e:
 tar -xzf qdrant-data-migration-2026-09-18.tar.gz   # -> C:\mem0\.qdrant_data
 tar -xzf mem0-history-2026-09-18.tar.gz            # -> C:\mem0\.mem0_data (opzionale)
