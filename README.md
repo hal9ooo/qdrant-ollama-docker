@@ -34,6 +34,13 @@ La particolarità di questo setup è che scarica automaticamente il modello di e
 
 > 💡 **Nota:** Al primo avvio, il container di inizializzazione (`ollama-init`) impiegherà alcuni minuti (in base alla tua connessione internet) per scaricare il modello da Ollama. Puoi controllare lo stato del download con `docker logs -f ollama_model_pull`.
 
+## 🪟 Replica su Windows (nativo, senza Ollama)
+
+Per replicare lo stack mem0 MCP su Windows usando **llama.cpp (Vulkan)** per le embedding
+e Docker solo per Qdrant, vedere la procedura completa in [`windows/README.md`](windows/README.md).
+Gli script in `windows/` (setup, avvio, env template) guidano l'installazione e la
+migrazione delle memorie esistenti.
+
 ## 🤖 Integrazione con AI IDE (Roo Code / Kilo Code)
 
 Questo setup risulta particolarmente utile per indicizzare un'intera **Codebase** da usare poi come contesto tramite RAG (Retrieval-Augmented Generation) in Assistenti AI integrati negli IDE (come **[Roo Code](https://github.com/RooVetgit/Roo-Code)**, **Kilo Code**, o **Cline**).

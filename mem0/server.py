@@ -9,10 +9,33 @@ DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.co
 DEEPSEEK_MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://ollama:11434")
 OLLAMA_EMBED_MODEL = os.environ.get("OLLAMA_MODEL", "embeddinggemma")
+EMBED_BASE_URL = os.environ.get("EMBED_BASE_URL", "")
+EMBED_MODEL = os.environ.get("EMBED_MODEL", "")
 QDRANT_HOST = os.environ.get("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
 COLLECTION_NAME = os.environ.get("COLLECTION_NAME", "mem0_memories")
 DEFAULT_USER_ID = os.environ.get("MEM0_USER_ID", "opencode")
+MEM0_DATA_DIR = os.environ.get("MEM0_DATA_DIR", "/data")
+
+if EMBED_BASE_URL:
+    embedder_config = {
+        "provider": "openai",
+        "config": {
+            "model": EMBED_MODEL or OLLAMA_EMBED_MODEL,
+            "openai_base_url": EMBED_BASE_URL,
+            "api_key": os.environ.get("EMBED_API_KEY") or "unused",
+            "embedding_dims": 768,
+        },
+    }
+else:
+    embedder_config = {
+        "provider": "ollama",
+        "config": {
+            "model": OLLAMA_EMBED_MODEL,
+            "ollama_base_url": OLLAMA_BASE_URL,
+            "embedding_dims": 768,
+        },
+    }
 
 config = {
     "vector_store": {
@@ -33,15 +56,8 @@ config = {
             "temperature": 0.0,
         },
     },
-    "embedder": {
-        "provider": "ollama",
-        "config": {
-            "model": OLLAMA_EMBED_MODEL,
-            "ollama_base_url": OLLAMA_BASE_URL,
-            "embedding_dims": 768,
-        },
-    },
-    "history_db_path": "/data/history.db",
+    "embedder": embedder_config,
+    "history_db_path": os.path.join(MEM0_DATA_DIR, "history.db"),
 }
 
 memory = Memory.from_config(config)
@@ -117,4 +133,9 @@ def delete_all_memories(user_id: str = DEFAULT_USER_ID) -> str:
 
 
 if __name__ == "__main__":
-    mcp.run(transport="streamable-http", host="0.0.0.0", port=8000, path="/mcp")
+    mcp.run(
+        transport="streamable-http",
+        host=os.environ.get("MEM0_HOST", "0.0.0.0"),
+        port=int(os.environ.get("MEM0_PORT", "8000")),
+        path="/mcp",
+    )
